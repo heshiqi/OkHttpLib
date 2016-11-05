@@ -49,7 +49,7 @@ public abstract class DataRequest<T> {
     public abstract T parseResult(Map<String, List<String>> headers, String resultJson, int statusCode) throws JSONException;
 
     /**
-     *  每个请求类在初始化后,最终要调用此方法进行构建
+     *
      * @return
      */
     public abstract DataRequest build();

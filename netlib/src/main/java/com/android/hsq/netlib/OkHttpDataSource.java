@@ -151,6 +151,7 @@ public class OkHttpDataSource implements HttpDataSource {
      * 创建一个连接
      */
     private Request makeRequest(DataRequest dataSpec) {
+        dataSpec=dataSpec.build();
         boolean allowGzip = (dataSpec.getFlags() & DataRequest.FLAG_ALLOW_GZIP) != 0;
 
         HttpUrl url = HttpUrl.parse(dataSpec.getUrl());
