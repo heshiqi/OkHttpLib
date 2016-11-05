@@ -6,6 +6,7 @@ import com.android.hsq.netlib.util.Exceptions;
 
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Call;
 import okhttp3.OkHttpClient;
 
 /**
@@ -56,10 +57,11 @@ public class HttpClientManage {
      * 异步执行网络请求操作
      * @param dataRequest
      * @param listener
+     * @return Call 返回本次执行的请求
      * @throws com.android.hsq.netlib.util.Exceptions.HttpDataSourceException
      */
-    public void executeRequest(DataRequest dataRequest, RequestListener listener) throws Exceptions.HttpDataSourceException {
+    public Call executeRequest(DataRequest dataRequest, RequestListener listener) throws Exceptions.HttpDataSourceException {
         OkHttpDataSource dataSource = new OkHttpDataSource(mOkHttpClient, USER_AGENT, listener);
-        dataSource.open(dataRequest);
+        return dataSource.openCall(dataRequest);
     }
 }

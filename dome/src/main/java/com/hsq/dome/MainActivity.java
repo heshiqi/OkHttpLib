@@ -2,7 +2,6 @@ package com.hsq.dome;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -10,8 +9,8 @@ import com.android.dome.R;
 import com.android.hsq.netlib.HttpClientManage;
 import com.android.hsq.netlib.callback.RequestListener;
 import com.android.hsq.netlib.util.Exceptions;
-
-import okhttp3.Call;
+import com.hsq.dome.request.GetLiveRoomServan;
+import com.hsq.dome.request.LiveRoomModel;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -26,15 +25,14 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 try {
-                    HttpClientManage.getInstance().executeRequest(new TestDataRequest("http://www.baidu.com"), new RequestListener<TestEntity>() {
+                    HttpClientManage.getInstance().executeRequest(new GetLiveRoomServan("http://clientlive.api.autohome.com.cn/api/live/room", "2051").build(), new RequestListener<LiveRoomModel>() {
                         @Override
-                        public void onSuccess(TestEntity data, Object tag) {
-                            Log.d("hh","data="+data.data);
-                            Log.d("hh","code="+data.code);
+                        public void onSuccess(LiveRoomModel data, Object tag) {
+
                         }
 
                         @Override
-                        public void onError(Call call, Exception e, Object tag) {
+                        public void onError(Exception e, Object tag) {
 
                         }
 

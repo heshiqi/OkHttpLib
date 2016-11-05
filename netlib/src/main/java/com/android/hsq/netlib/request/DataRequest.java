@@ -1,5 +1,7 @@
 package com.android.hsq.netlib.request;
 
+import org.json.JSONException;
+
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +12,8 @@ import okhttp3.RequestBody;
  */
 public abstract class DataRequest<T> {
 
+    protected final String TAG=getClass().getName();
+
     public static final int FLAG_ALLOW_GZIP = 1;
 
     protected String mUrl;
@@ -18,6 +22,7 @@ public abstract class DataRequest<T> {
 
     /**
      * 标记是否支持压缩
+     * {@link #FLAG_ALLOW_GZIP}
      */
     protected int flags;
 
@@ -41,7 +46,7 @@ public abstract class DataRequest<T> {
      * @param statusCode  响应码
      * @return
      */
-    public abstract T parseResult(Map<String, List<String>> headers, String resultJson, int statusCode);
+    public abstract T parseResult(Map<String, List<String>> headers, String resultJson, int statusCode) throws JSONException;
 
     /**
      *  每个请求类在初始化后,最终要调用此方法进行构建

@@ -21,6 +21,8 @@ import com.android.hsq.netlib.util.Exceptions;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Call;
+
 public interface HttpDataSource extends DataSource {
 
   @Override
@@ -28,6 +30,8 @@ public interface HttpDataSource extends DataSource {
 
   @Override
   void open(DataRequest dataSpec) throws Exceptions.HttpDataSourceException;
+
+  Call openCall(DataRequest dataSpec) throws Exceptions.HttpDataSourceException;
 
   @Override
   void close() throws Exceptions.HttpDataSourceException;

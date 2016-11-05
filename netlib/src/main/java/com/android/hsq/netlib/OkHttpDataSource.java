@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2014 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.android.hsq.netlib;
 
 import com.android.hsq.netlib.callback.RequestListener;
@@ -102,7 +87,7 @@ public class OkHttpDataSource implements HttpDataSource {
         if (listener != null) {
             try {
                 listener.onSuccess(dataSpec.parseResult(getResponseHeaders(), response.body().string(), responseCode), dataSpec.getTag());
-            } catch (IOException e) {
+            } catch (Exception e) {
                 closeConnectionQuietly();
                 throw new HttpDataSourceException("Unable to read to " + dataSpec.getUrl(), e,
                         dataSpec, HttpDataSourceException.TYPE_READ);
@@ -114,13 +99,19 @@ public class OkHttpDataSource implements HttpDataSource {
 
     @Override
     public void open(final DataRequest dataSpec) throws HttpDataSourceException {
+        openCall(dataSpec);
+    }
+
+    @Override
+    public Call openCall(final DataRequest dataSpec) throws HttpDataSourceException {
         this.dataSpec = dataSpec;
         Request request = makeRequest(dataSpec);
-        okHttpClient.newCall(request).enqueue(new Callback() {
+        Call c=okHttpClient.newCall(request);
+        c.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 if (listener != null) {
-                    listener.onError(call, e, dataSpec.getTag());
+                    listener.onError( e, dataSpec.getTag());
                 }
             }
 
@@ -128,31 +119,32 @@ public class OkHttpDataSource implements HttpDataSource {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     if (call.isCanceled()) {
-                        sendFailResultCallback(call, new HttpDataSourceException("Canceled!", dataSpec, HttpDataSourceException.TYPE_CANCELED),dataSpec.getTag());
+                        sendFailResultCallback(new HttpDataSourceException("Canceled!", dataSpec, HttpDataSourceException.TYPE_CANCELED),dataSpec.getTag());
                         return;
                     }
 
                     if (!response.isSuccessful()) {
-                        sendFailResultCallback(call, new HttpDataSourceException("request failed , reponse's code is : " + response.code(), dataSpec, HttpDataSourceException.TYPE_OPEN),dataSpec.getTag());
+                        sendFailResultCallback(new HttpDataSourceException("request failed , reponse's code is : " + response.code(), dataSpec, HttpDataSourceException.TYPE_OPEN),dataSpec.getTag());
                         return;
                     }
 
                     if (listener != null) {
-                        listener.onSuccess(dataSpec.parseResult(getResponseHeaders(), response.body().toString(), response.code()), dataSpec.getTag());
+                        listener.onSuccess(dataSpec.parseResult(getResponseHeaders(), response.body().string(), response.code()), dataSpec.getTag());
                     }
                 } catch (Exception e) {
-                    sendFailResultCallback(call, e, dataSpec.getTag());
+                    sendFailResultCallback( e, dataSpec.getTag());
                 } finally {
                     if (response.body() != null)
                         response.body().close();
                 }
             }
         });
+        return c;
     }
 
-    public void sendFailResultCallback(final Call call, final Exception e, Object tag) {
+    public void sendFailResultCallback(final Exception e, Object tag) {
         if (listener == null) return;
-        listener.onError(call, e, tag);
+        listener.onError( e, tag);
     }
 
     /**

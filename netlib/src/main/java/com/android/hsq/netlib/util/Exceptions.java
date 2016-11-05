@@ -52,6 +52,12 @@ public class Exceptions {
             this.type = type;
         }
 
+        public HttpDataSourceException(String message, Exception cause, DataRequest dataSpec, int type) {
+            super(message, cause);
+            this.dataSpec = dataSpec;
+            this.type = type;
+        }
+
     }
 
     /**
