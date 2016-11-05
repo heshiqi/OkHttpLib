@@ -9,8 +9,6 @@ import com.android.dome.R;
 import com.android.hsq.netlib.HttpClientManage;
 import com.android.hsq.netlib.callback.RequestListener;
 import com.android.hsq.netlib.util.Exceptions;
-import com.hsq.dome.request.GetLiveRoomServan;
-import com.hsq.dome.request.LiveRoomModel;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -25,9 +23,9 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 try {
-                    HttpClientManage.getInstance().executeRequest(new GetLiveRoomServan("http://clientlive.api.autohome.com.cn/api/live/room", "2051").build(), new RequestListener<LiveRoomModel>() {
+                    HttpClientManage.getInstance().executeRequest(new TestDataRequest("").build(), new RequestListener<TestEntity>() {
                         @Override
-                        public void onSuccess(LiveRoomModel data, Object tag) {
+                        public void onSuccess(TestEntity data, Object tag) {
 
                         }
 
